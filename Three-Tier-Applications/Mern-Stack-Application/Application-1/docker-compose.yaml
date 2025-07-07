@@ -1,0 +1,39 @@
+services:
+  nginx:
+    build: ./mern/nginx
+    ports:
+      - "8080:80"
+    networks:
+      - mern-network
+    depends_on:
+      - bc 
+      - fc
+  bc:
+    build: ./mern/backend
+    networks:
+      - mern-network
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/mydatabase
+    depends_on:
+      - mongodb
+
+  fc:
+    build: ./mern/frontend
+    networks:
+      - mern-network
+    
+  mongodb:
+    image: mongo:latest
+    networks:
+      - mern-network
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  mern-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+
